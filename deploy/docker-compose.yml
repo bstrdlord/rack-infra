@@ -1,0 +1,111 @@
+
+version: "3.8"
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    # for prod
+    # restart: always
+    restart: on-failure
+
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+
+  # nats_cluster:
+  #   container_name: nats_cluster
+  #   image: nats:latest
+  #   ports:
+  #     - "4222:4222"
+  #     - "${NATS_CLUSTER_PORT}:${NATS_CLUSTER_PORT}"
+  #   # networks:
+  #   #   - app_network
+  #   command: ["-js", "--server_name", "main-js","--port", "4222", "--user","${NATS_USER}", "--pass", "${NATS_PASSWORD}", "--cluster_name", "main-cluster", "-cluster", "nats://0.0.0.0:${NATS_CLUSTER_PORT}", "-routes","${NATS_ROUTES}"]
+
+  nats:
+    container_name: nats
+    image: nats:latest
+    ports:
+      - "4222:4222"
+    volumes:
+      - ./nats/:/nats/
+    command: -c /nats/nats-dev.conf
+
+
+    #   - app_network
+    # command: ["-c", "${NATS_CONFIG_PATH}"]
+    # command: ${NATS_COMMAND:-nats-server}
+  parseable:
+    container_name: parseable
+    image: containers.parseable.com/parseable/parseable:latest
+    command: parseable local-store
+    ports:
+      - "8000:8000"
+    # networks:
+    #   - app_network
+    volumes:
+      - /parseable/data:/parseable/data
+      - /parseable/staging:/parseable/staging
+    environment:
+      P_FS_DIR: /parseable/data
+      P_SEND_ANONYMOUS_USAGE_DATA: "false"
+      P_STAGING_DIR: /parseable/staging
+      P_USERNAME: ${PARSEABLE_USERNAME}
+      P_PASSWORD: ${PARSEABLE_PASSWORD}
+
+  blockchain:
+    build:
+      dockerfile: blockchain/Dockerfile
+      context: ../
+      target: dev
+    container_name: rack_blockchain
+    depends_on:
+      - nats
+    environment:
+      - ENVPATH=.env
+
+  api:
+    build:
+      dockerfile: api/Dockerfile
+      context: ../
+      target: dev
+    container_name: rack_api
+    ports:
+      - "8888:8888"
+    environment:
+      - ENVPATH=.env
+    # networks:
+    #   - app_network
+    # depends_on:
+      # - postgres
+      # - nats
+      # - parseable
+      # - blockchain
+    # environment:
+      # DD_DB_HOST: db2
+    # command: /server
+    # depends_on:
+
+networks:
+  default:
+    name: app_net
+# networks:
+#   app_network:
+#     driver: bridge
+
+# networks:
+#   postgres:
+#     name: postgres
+#   nats:
+#     name: nats
+#   web:
+#    name: web
+
+volumes:
+  postgres_data:
