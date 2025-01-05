@@ -6,7 +6,7 @@ rack gateway infra
 - **Database:** `postgres`
 - **Mq:** `nats`
 - **Logging:** `parseable`
-- **Orchestration:** `Docker compose`
+- **Orchestration:** `docker compose`
 
 ## Deployment
 - Create [config](#configuration) (path: deploy/.env) 
