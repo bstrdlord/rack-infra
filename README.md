@@ -1,6 +1,10 @@
 # Rack Infra 
 rack gateway infra 
 
+[Stack](#stack)     
+[Deployment](#deployment)   
+[Configuration](#configuration)    
+
 
 ## Stack 
 - **Database:** `postgres`
