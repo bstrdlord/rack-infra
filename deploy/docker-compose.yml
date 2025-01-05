@@ -60,24 +60,25 @@ services:
       P_PASSWORD: ${PARSEABLE_PASSWORD}
 
   blockchain:
-    build:
-      dockerfile: blockchain/Dockerfile
-      context: ../
-      target: dev
+    image: rack/blockchain:1.0
     container_name: rack_blockchain
     depends_on:
       - nats
+    volumes:
+      - ../.env:/app/.env
+    env_file:
+      - ../.env
     environment:
       - ENVPATH=.env
 
   api:
-    build:
-      dockerfile: api/Dockerfile
-      context: ../
-      target: dev
-    container_name: rack_api
+    image: rack/api:1.0
     ports:
       - "8888:8888"
+    volumes:
+      - ../.env:/app/.env
+    env_file:
+      - ../.env
     environment:
       - ENVPATH=.env
     # networks:
