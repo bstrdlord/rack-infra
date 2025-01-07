@@ -65,9 +65,9 @@ services:
     depends_on:
       - nats
     volumes:
-      - ../.env:/app/.env
+      - ./.env:/app/.env
     env_file:
-      - ../.env
+      - ./.env
     environment:
       - ENVPATH=.env
 
@@ -76,9 +76,9 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      - ../.env:/app/.env
+      - ./.env:/app/.env
     env_file:
-      - ../.env
+      - ./.env
     environment:
       - ENVPATH=.env
     # networks:
