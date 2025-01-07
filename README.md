@@ -17,16 +17,16 @@ rack gateway infra
 - Build images:
 ```sh
 # rack api
-docker buildx b uild -t rack/api:1.0 -f api/Dockerfile ./
+docker buildx build -t rack/api:1.0 -f api/Dockerfile ./
 # rack blockchain
 docker buildx build -t rack/blockchain:1.0 -f blockchain/Dockerfile ./
 ```
 - Run:
 ```
 cd deploy
-docker-compose --env-file .env -f deploy/docker-compose.yml up nats postgres parseable -d
-docker-compose --env-file .env -f deploy/docker-compose.yml up blockchain -d
-docker-compose --env-file .env -f deploy/docker-compose.yml up api -d
+docker-compose --env-file .env -f docker-compose.yml up nats postgres parseable -d
+docker-compose --env-file .env -f docker-compose.yml up blockchain -d
+docker-compose --env-file .env -f docker-compose.yml up api -d
 ```
 
 ## Configuration 
